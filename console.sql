@@ -8,6 +8,11 @@ create table rent_statuses(
     status_name    varchar(40)   unique      not null
 );
 
+create table status_of_auto(
+    status_id   INTEGER     primary key not null DEFAULT 0,
+    status_name varchar(40) unique      not null
+);
+
 create table drive_categories(
     category_id SERIAL primary key not null,
     category_name    varchar(10) unique not null
@@ -38,13 +43,32 @@ create table autos_models(
                  REFERENCES drive_categories (category_id) ON DELETE CASCADE
 );
 
+create table model_price (
+    model_id INTEGER primary key not null,
+    price NUMERIC not null DEFAULT 0,
+    CONSTRAINT model_id_fk
+             FOREIGN KEY (model_id)
+                REFERENCES autos_models (model_id)
+);
+
 create table autos(
     auto_id SERIAL primary key not null,
+    status_id INTEGER not null,
     model_id INTEGER not null,
     registration_number varchar(20) not null,
+    mileage INTEGER not null,
+    quality INTEGER not null,
     CONSTRAINT model_id_fk
               FOREIGN KEY (model_id)
-                  REFERENCES autos_models (model_id) ON DELETE CASCADE
+                    REFERENCES autos_models (model_id) ON DELETE CASCADE,
+    CONSTRAINT status_id_fk
+              FOREIGN KEY  (status_id)
+                    REFERENCES status_of_auto (status_id) ON DELETE SET NULL,
+    CONSTRAINT quality_range
+              CHECK ( quality >= 0 and quality <= 50),
+    CONSTRAINT mileage_nonnegative
+              CHECK ( mileage >= 0 )
+
 
 );
 
@@ -87,13 +111,16 @@ create table rent_contracts(
     auto_id         INTEGER             not null,
     rent_begin_date date                not null,
     rent_end_date   date                not null,
-    rent_price      INTEGER             not null,
+    rent_price      NUMERIC             not null CHECK ( rent_price > 0 ),
+    actual_income   NUMERIC             not null DEFAULT 0,
     CONSTRAINT client_id_fk
                FOREIGN KEY (client_id)
                    REFERENCES clients (client_id) ON DELETE CASCADE,
     CONSTRAINT auto_id_fk
                FOREIGN KEY (auto_id)
-                   REFERENCES autos (auto_id) ON DELETE CASCADE
+                   REFERENCES autos (auto_id) ON DELETE CASCADE,
+    CONSTRAINT valid_dates
+               CHECK ( rent_begin_date > rent_end_date )
 );
 
 create table clients_rating(
@@ -121,4 +148,5 @@ create table rents_history(
                 FOREIGN KEY (status_id)
                     REFERENCES rent_statuses (status_id) ON DELETE CASCADE
 );
+
 
