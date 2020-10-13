@@ -55,7 +55,7 @@ create table autos(
     auto_id SERIAL primary key not null,
     status_id INTEGER not null,
     model_id INTEGER not null,
-    registration_number varchar(20) not null,
+    registration_number varchar(20) not null unique,
     mileage INTEGER not null,
     quality INTEGER not null,
     CONSTRAINT model_id_fk
@@ -76,8 +76,8 @@ create table auto_in_office(
     note_id         SERIAL primary key  not null,
     auto_id         INTEGER             not null,
     office_id       INTEGER             not null,
-    receipt_date    date                not null,
-    departure_date  date                default NULL,
+    receipt_date    timestamp                not null,
+    departure_date  timestamp                default NULL,
     CONSTRAINT auto_id_fk
                 FOREIGN KEY (auto_id)
                    REFERENCES autos (auto_id) ON DELETE CASCADE
@@ -109,8 +109,8 @@ create table rent_contracts(
     contract_id     SERIAL  primary key not null,
     client_id       INTEGER             not null,
     auto_id         INTEGER             not null,
-    rent_begin_date date                not null,
-    rent_end_date   date                not null,
+    rent_begin_date timestamp                not null,
+    rent_end_date   timestamp                not null,
     rent_price      NUMERIC             not null CHECK ( rent_price > 0 ),
     actual_income   NUMERIC             not null DEFAULT 0,
     CONSTRAINT client_id_fk
@@ -140,7 +140,7 @@ create table rents_history(
     contract_id INTEGER not null,
     status_id INTEGER not null,
     note varchar(200) not null,
-    note_date date not null,
+    note_date timestamp not null,
     CONSTRAINT contract_id_fk
                 FOREIGN KEY (contract_id)
                     REFERENCES rent_contracts (contract_id) ON DELETE CASCADE,
