@@ -147,3 +147,21 @@ insert into car_sharing_schema.auto_in_office (auto_id, office_id, receipt_date)
 values ((select auto_id from car_sharing_schema.autos where registration_number = 'н465мк36RUS'),
         1,
         TIMESTAMP '2020-10-12 11:00:00');
+
+insert into car_sharing_schema.clients (client_name, client_second_name, client_passport, client_drive_license)
+values ('Ivan', 'Ivanov', '4215656421', '3216987265');
+
+insert into car_sharing_schema.clients_categories (client_id, category_id)
+values ((select client_id from car_sharing_schema.clients where client_passport = '4215656421'),
+        (select category_id from car_sharing_schema.drive_categories where category_name = 'B'));
+
+insert into car_sharing_schema.clients_rating (client_id, raring_id)
+values ((select client_id from car_sharing_schema.clients where client_passport = '4215656421'),
+        (select rating_id from car_sharing_schema.ratings where rating = 'neutral'));
+
+insert into car_sharing_schema.rent_contracts (client_id, auto_id, rent_begin_date, rent_end_date, rent_price)
+values ((select client_id from car_sharing_schema.clients where client_passport = '4215656421'),
+        (select auto_id from car_sharing_schema.autos where registration_number = 'и225мк36RUS'),
+        timestamp '2020-10-15 10:00',
+        timestamp '2020-10-18 10:00',
+        9000);

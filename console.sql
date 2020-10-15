@@ -83,13 +83,13 @@ create table auto_in_office(
                    REFERENCES autos (auto_id) ON DELETE CASCADE
 );
 
-create table clients(
+create table car_sharing_schema.clients(
     client_id               SERIAL      primary key not null,
     client_name             varchar(90)             not null,
     client_second_name      varchar(90)             not null,
     client_father_name      varchar(90)             default null,
-    client_passport         varchar(200)            not null,
-    client_drive_license    varchar(200)            not null
+    client_passport         varchar(200)            not null unique,
+    client_drive_license    varchar(200)            not null unique
 
 );
 
@@ -120,7 +120,7 @@ create table rent_contracts(
                FOREIGN KEY (auto_id)
                    REFERENCES autos (auto_id) ON DELETE CASCADE,
     CONSTRAINT valid_dates
-               CHECK ( rent_begin_date > rent_end_date )
+               CHECK ( rent_begin_date < rent_end_date )
 );
 
 create table clients_rating(
