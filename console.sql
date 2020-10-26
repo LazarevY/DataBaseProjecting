@@ -45,7 +45,7 @@ create table autos_models(
 
 create table model_price (
     model_id INTEGER primary key not null,
-    price NUMERIC not null DEFAULT 0,
+    price NUMERIC not null DEFAULT 0 CHECK ( price > 0 ),
     CONSTRAINT model_id_fk
              FOREIGN KEY (model_id)
                 REFERENCES autos_models (model_id)
@@ -56,7 +56,7 @@ create table autos(
     status_id INTEGER not null,
     model_id INTEGER not null,
     registration_number varchar(20) not null unique,
-    mileage INTEGER not null,
+    mileage INTEGER not null CHECK ( mileage >= 0 ),
     quality INTEGER not null,
     CONSTRAINT model_id_fk
               FOREIGN KEY (model_id)
@@ -80,7 +80,9 @@ create table auto_in_office(
     departure_date  timestamp                default NULL,
     CONSTRAINT auto_id_fk
                 FOREIGN KEY (auto_id)
-                   REFERENCES autos (auto_id) ON DELETE CASCADE
+                   REFERENCES autos (auto_id) ON DELETE CASCADE,
+    CONSTRAINT auto_in_out_validate
+                CHECK ( departure_date > receipt_date )
 );
 
 create table car_sharing_schema.clients(
@@ -112,7 +114,7 @@ create table rent_contracts(
     rent_begin_date timestamp                not null,
     rent_end_date   timestamp                not null,
     rent_price      NUMERIC             not null CHECK ( rent_price > 0 ),
-    actual_income   NUMERIC             not null DEFAULT 0,
+    actual_income   NUMERIC             not null DEFAULT 0 CHECK ( actual_income >= 0 ),
     CONSTRAINT client_id_fk
                FOREIGN KEY (client_id)
                    REFERENCES clients (client_id) ON DELETE CASCADE,
